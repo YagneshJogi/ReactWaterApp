@@ -3,51 +3,46 @@ export const theme = {
     primary: '#2196f3',
     primaryDark: '#1976d2',
     secondary: '#4caf50',
-    background: '#f8fafc',
+    background: '#f5f5f5',
     surface: '#ffffff',
     text: {
-      primary: '#1a1a1a',
-      secondary: '#424242',
+      primary: '#212121',
+      secondary: '#757575',
       light: '#ffffff'
     },
     status: {
-      success: '#00c853',
-      error: '#ff1744',
-      warning: '#ffa000',
-      info: '#00b0ff'
+      success: '#4caf50',
+      error: '#f44336',
+      warning: '#ff9800',
+      info: '#2196f3'
     }
   },
   typography: {
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
     h1: {
-      fontSize: '2.75rem',
-      fontWeight: 800,
-      lineHeight: 1.2,
-      letterSpacing: '-0.02em'
+      fontSize: '2.5rem',
+      fontWeight: 700,
+      lineHeight: 1.2
     },
     h2: {
-      fontSize: '2.25rem',
-      fontWeight: 700,
-      lineHeight: 1.3,
-      letterSpacing: '-0.01em'
+      fontSize: '2rem',
+      fontWeight: 600,
+      lineHeight: 1.3
     },
     h3: {
-      fontSize: '1.875rem',
-      fontWeight: 700,
-      lineHeight: 1.4,
-      letterSpacing: '-0.01em'
+      fontSize: '1.75rem',
+      fontWeight: 600,
+      lineHeight: 1.4
     },
     body1: {
-      fontSize: '1.125rem',
-      fontWeight: 500,
-      lineHeight: 1.6,
-      letterSpacing: '0.01em'
+      fontSize: '1rem',
+      fontWeight: 400,
+      lineHeight: 1.5
     },
     body2: {
-      fontSize: '1rem',
-      fontWeight: 500,
-      lineHeight: 1.6,
-      letterSpacing: '0.01em'
+      fontSize: '0.875rem',
+      fontWeight: 400,
+      lineHeight: 1.5
     }
   },
   spacing: {
@@ -59,15 +54,15 @@ export const theme = {
     xxl: '3rem'
   },
   borderRadius: {
-    sm: '6px',
-    md: '10px',
-    lg: '16px',
-    xl: '20px'
+    sm: '4px',
+    md: '8px',
+    lg: '12px',
+    xl: '16px'
   },
   shadows: {
-    sm: '0 2px 8px rgba(0, 0, 0, 0.08)',
-    md: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    lg: '0 8px 20px rgba(0, 0, 0, 0.12)'
+    sm: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    md: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    lg: '0 8px 16px rgba(0, 0, 0, 0.1)'
   },
   breakpoints: {
     mobile: '320px',
