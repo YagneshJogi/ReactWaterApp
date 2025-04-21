@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { ref, push, set } from 'firebase/database';
 import { database } from '../firebase';
+import { NotificationManager } from '../components/Notification';
 
 const DashboardContainer = styled.div`
   padding: ${props => props.theme.spacing.md};
@@ -11,16 +12,18 @@ const DashboardContainer = styled.div`
 `;
 
 const Card = styled.div`
-  background: ${props => props.theme.colors.surface};
+  background: #ffffff;
+  backdrop-filter: none;
   border-radius: ${props => props.theme.borderRadius.lg};
   padding: ${props => props.theme.spacing.xl};
   margin-bottom: ${props => props.theme.spacing.xl};
-  box-shadow: ${props => props.theme.shadows.md};
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: ${props => props.theme.shadows.lg};
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   }
 
   @media (max-width: ${props => props.theme.breakpoints.tablet}) {
@@ -47,12 +50,14 @@ const StatusBadge = styled.div`
   padding: ${props => props.theme.spacing.xs} ${props => props.theme.spacing.sm};
   border-radius: ${props => props.theme.borderRadius.sm};
   background-color: ${props => props.connected ? 
-    props.theme.colors.status.success : 
-    props.theme.colors.status.error
+    'rgba(34, 197, 94, 0.9)' : 
+    'rgba(239, 68, 68, 0.9)'
   };
+  backdrop-filter: blur(4px);
   color: white;
   font-size: ${props => props.theme.typography.body2.fontSize};
   font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 const DataGrid = styled.div`
@@ -69,12 +74,16 @@ const DataGrid = styled.div`
 const DataItem = styled.div`
   text-align: center;
   padding: ${props => props.theme.spacing.lg};
-  background: ${props => props.theme.colors.background};
+  background: #ffffff;
+  backdrop-filter: none;
   border-radius: ${props => props.theme.borderRadius.md};
-  transition: transform 0.2s;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
+    background: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -102,41 +111,47 @@ const InputGroup = styled.div`
 
 const Input = styled.input`
   padding: ${props => props.theme.spacing.md};
-  border: 1px solid ${props => props.theme.colors.text.secondary};
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: ${props => props.theme.borderRadius.md};
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
   flex: 1;
   font-size: ${props => props.theme.typography.body1.fontSize};
-  transition: border-color 0.2s;
+  transition: all 0.2s ease;
 
   &:focus {
     border-color: ${props => props.theme.colors.primary};
+    background: rgba(255, 255, 255, 0.95);
     outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
   }
 
   &:disabled {
-    background-color: ${props => props.theme.colors.background};
+    background: rgba(243, 244, 246, 0.8);
     cursor: not-allowed;
   }
 `;
 
 const Button = styled.button`
   padding: ${props => props.theme.spacing.md} ${props => props.theme.spacing.xl};
-  background-color: ${props => props.theme.colors.primary};
+  background: rgba(37, 99, 235, 0.9);
   color: white;
   border: none;
   border-radius: ${props => props.theme.borderRadius.md};
   cursor: pointer;
   font-size: ${props => props.theme.typography.body1.fontSize};
   font-weight: 500;
-  transition: background-color 0.2s, transform 0.2s;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
 
   &:hover {
-    background-color: ${props => props.theme.colors.primaryDark};
+    background: rgba(29, 78, 216, 0.95);
     transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   &:disabled {
-    background-color: ${props => props.theme.colors.text.secondary};
+    background: rgba(156, 163, 175, 0.8);
     cursor: not-allowed;
     transform: none;
   }
@@ -147,12 +162,13 @@ const Button = styled.button`
 `;
 
 const ErrorMessage = styled.div`
-  color: ${props => props.theme.colors.status.error};
+  color: #dc2626;
   margin-bottom: ${props => props.theme.spacing.md};
   padding: ${props => props.theme.spacing.md};
-  background-color: ${props => props.theme.colors.background};
+  background: #ffffff;
   border-radius: ${props => props.theme.borderRadius.md};
-  border-left: 4px solid ${props => props.theme.colors.status.error};
+  border-left: 4px solid #dc2626;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 `;
 
 function Dashboard() {
@@ -168,12 +184,24 @@ function Dashboard() {
   const [isSaving, setIsSaving] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('Connecting...');
   const [isLoading, setIsLoading] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+
+  const addNotification = (message, type = 'success') => {
+    const newNotification = { message, type };
+    setNotifications(prev => [...prev, newNotification]);
+  };
+
+  const removeNotification = (index) => {
+    setNotifications(prev => prev.filter((_, i) => i !== index));
+  };
 
   useEffect(() => {
     let isMounted = true;
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/data');
+        // Get the current hostname (will be localhost or local IP)
+        const hostname = window.location.hostname;
+        const response = await fetch(`http://${hostname}:5000/api/data`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -227,11 +255,30 @@ function Dashboard() {
       });
       setError('');
       setSource('');
+      addNotification('Reading saved successfully');
     } catch (err) {
       setError('Failed to save data to Firebase');
       console.error('Error saving data:', err);
+      addNotification('Failed to save reading', 'error');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async (readingId) => {
+    try {
+      const readingRef = ref(database, `readings/${readingId}`);
+      await set(readingRef, null);
+      addNotification('Reading deleted successfully');
+    } catch (error) {
+      console.error('Error deleting reading:', error);
+      addNotification('Failed to delete reading', 'error');
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !isSaving) {
+      handleSave();
     }
   };
 
@@ -285,6 +332,7 @@ function Dashboard() {
             placeholder="Enter water source (e.g., tap, lake, well)"
             value={source}
             onChange={(e) => setSource(e.target.value)}
+            onKeyPress={handleKeyPress}
             disabled={isSaving}
           />
           <Button 
@@ -295,6 +343,10 @@ function Dashboard() {
           </Button>
         </InputGroup>
       </Card>
+      <NotificationManager 
+        notifications={notifications} 
+        onRemove={removeNotification} 
+      />
     </DashboardContainer>
   );
 }

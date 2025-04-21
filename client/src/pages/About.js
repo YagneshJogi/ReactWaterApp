@@ -1,67 +1,141 @@
-import React from 'react';
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import SystemInfo from '../components/SystemInfo';
+import Specs from '../components/Specs';
+import Team from '../components/Team';
 
-function About() {
+const Container = styled.div`
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+  }
+`;
+
+const Title = styled.h1`
+  color: #1e293b;
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 2rem 0;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    font-size: 1.75rem;
+    margin: 1.5rem 0;
+  }
+`;
+
+const TabContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+  }
+`;
+
+const Tab = styled.button`
+  padding: 0.75rem 1.5rem;
+  background: ${props => props.active ? '#2563eb' : '#ffffff'};
+  color: ${props => props.active ? '#ffffff' : '#1e293b'};
+  border: 1px solid ${props => props.active ? '#2563eb' : '#e5e7eb'};
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  text-align: center;
+
+  &:hover {
+    background: ${props => props.active ? '#1d4ed8' : '#f8fafc'};
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    min-width: unset;
+  }
+`;
+
+const ContentContainer = styled.div`
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 1rem auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    margin: 0.5rem auto;
+  }
+`;
+
+const About = () => {
+  const [activeTab, setActiveTab] = useState('overview');
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return <SystemInfo />;
+      case 'specs':
+        return <Specs />;
+      case 'team':
+        return <Team />;
+      default:
+        return <SystemInfo />;
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="card bg-base-100 shadow-xl">
-        <div className="card-body">
-          <h1 className="text-4xl font-bold text-center mb-8">About Our Team</h1>
-          
-          <p className="text-lg text-base-content/70 mb-8">
-            We are a team of four driven and passionate individuals, working together to build an innovative IoT-based water monitoring system. Our combined expertise in both software and hardware domains allows us to deliver a seamless and intelligent solution that addresses real-world water management challenges.
-          </p>
+    <Container>
+      <Title>About Smart Water Quality Monitoring System</Title>
+      
+      <TabContainer>
+        <Tab 
+          active={activeTab === 'overview'} 
+          onClick={() => setActiveTab('overview')}
+        >
+          Overview
+        </Tab>
+        <Tab 
+          active={activeTab === 'specs'} 
+          onClick={() => setActiveTab('specs')}
+        >
+          Specifications
+        </Tab>
+        <Tab 
+          active={activeTab === 'team'} 
+          onClick={() => setActiveTab('team')}
+        >
+          Our Team
+        </Tab>
+      </TabContainer>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div className="card bg-base-200 hover:shadow-lg transition-all duration-300">
-              <div className="card-body">
-                <h2 className="card-title text-primary">Software Development Team</h2>
-                <p className="text-base-content/70">
-                  Yagnesh Jogi and Atharv Kulkarni form the core of our software development team. They are responsible for designing and implementing the backend architecture, database integration, and user interface of the system. Their work ensures smooth communication between the IoT devices and the cloud, enabling real-time monitoring and efficient data handling. With a strong focus on performance, security, and user experience, they are building a robust platform that powers the system's intelligence.
-                </p>
-              </div>
-            </div>
-
-            <div className="card bg-base-200 hover:shadow-lg transition-all duration-300">
-              <div className="card-body">
-                <h2 className="card-title text-primary">Hardware Development Team</h2>
-                <p className="text-base-content/70">
-                  On the hardware side, Manaswa Mahalunge and Parag Pinjani are leading the charge. They are responsible for building the physical components of the system, including sensor integration, microcontroller programming, and overall circuit design. Their hands-on skills and deep understanding of electronics ensure accurate data collection, reliable system performance, and practical deployment in real-world environments.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <p className="text-lg text-base-content/70 mb-12">
-            Together, our team bridges the gap between digital intelligence and physical implementation. With a shared vision and complementary skill sets, we collaborate closely to prototype, test, and refine our solution. Each member brings unique strengths, and our combined efforts reflect a strong commitment to innovation, precision, and sustainability. We aim to create a product that not only solves water monitoring challenges but also contributes to smarter, more responsible water usage.
-          </p>
-
-          <div className="divider"></div>
-
-          <div className="text-center space-y-6">
-            <div className="flex flex-wrap justify-center gap-4">
-              <a 
-                href="https://github.com/your-repo" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="btn btn-primary"
-              >
-                GitHub Repository
-              </a>
-              <a 
-                href="mailto:contact@example.com"
-                className="btn btn-primary"
-              >
-                Contact Us
-              </a>
-            </div>
-            <p className="text-base-content/60">
-              Copyright © 2025 - All rights reserved by Droplet
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+      <ContentContainer>
+        {renderContent()}
+      </ContentContainer>
+    </Container>
   );
-}
+};
 
 export default About; 

@@ -1,71 +1,98 @@
 import { createGlobalStyle } from 'styled-components';
-import { theme } from './theme';
+import oceanBg from './assets/images/ocean-bg.jpg';
 
 export const GlobalStyle = createGlobalStyle`
-  * {
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  *, *::before, *::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
   }
 
   html {
-    font-size: 16px;
     height: 100%;
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: ${theme.colors.background};
-    color: ${theme.colors.text.primary};
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    overflow-x: hidden;
+    color: white;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
+    background-image: url(${oceanBg});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -2;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.2) 100%
+    );
+    z-index: -1;
   }
 
   #root {
-    height: 100%;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    isolation: isolate;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
-    margin-bottom: ${theme.spacing.md};
+    margin: 0;
+    line-height: 1.2;
   }
 
-  p {
-    margin-bottom: ${theme.spacing.md};
+  a {
+    text-decoration: none;
+    color: inherit;
   }
 
   button {
+    background: none;
+    border: none;
     cursor: pointer;
     font-family: inherit;
-    border: none;
-    outline: none;
   }
 
-  input {
-    font-family: inherit;
-    outline: none;
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
   }
 
-  /* Mobile-first responsive design */
-  @media (max-width: ${theme.breakpoints.mobile}) {
-    html {
-      font-size: 14px;
-    }
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
   }
 
-  /* Tablet */
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    html {
-      font-size: 15px;
-    }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(37, 99, 235, 0.5);
+    border-radius: 4px;
   }
 
-  /* Desktop */
-  @media (min-width: ${theme.breakpoints.desktop}) {
-    html {
-      font-size: 16px;
-    }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(37, 99, 235, 0.7);
   }
 `; 

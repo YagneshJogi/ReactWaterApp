@@ -6,9 +6,24 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Get the local IP address
+const os = require('os');
+const interfaces = os.networkInterfaces();
+let localIP = 'localhost';
+
+// Find the IP address of the mobile hotspot interface
+for (const name of Object.keys(interfaces)) {
+  for (const iface of interfaces[name]) {
+    if (iface.family === 'IPv4' && !iface.internal) {
+      localIP = iface.address;
+      break;
+    }
+  }
+}
+
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:3000', // React app's origin
+  origin: [`http://localhost:3000`, `http://${localIP}:3000`], // Allow both localhost and local IP
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
@@ -18,13 +33,16 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/build')));
 
 // Static ESP32 IP address
-const ESP32_IP = '192.168.1.100'; // Replace with your ESP32's static IP
+const ESP32_IP = '192.168.173.192'; // ESP32's IP on the mobile hotspot
 
 // Proxy endpoint for ESP32 data
 app.get('/api/data', async (req, res) => {
   try {
     const response = await axios.get(`http://${ESP32_IP}/data`, {
-      timeout: 5000 // 5 second timeout
+      timeout: 5000, // 5 second timeout
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      }
     });
     
     // Validate the response data
@@ -68,7 +86,9 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`ESP32 IP: ${ESP32_IP}`);
+  console.log(`Local IP: ${localIP}`);
+  console.log(`Access the app at: http://${localIP}:3000`);
 }); 
